@@ -85,8 +85,8 @@ int score_pile(deckObj* currPile)
 //scores a given player's playSpace
 int score_all_piles(playSpace* myPlayspace)
 {
-	int totalScore;
-	for(int i = 0; i < myPlayspace->size(); i++)
+	int totalScore = 0;
+	for(int i = 0; i < myPlayspace->size()-1; i++)
 		{totalScore += score_pile((*myPlayspace)[i]);}
 	return totalScore;
 }
@@ -220,6 +220,7 @@ void takeTurn(playSpace* currPlayer, playSpace* boardState, playSpace* otherPlay
 	}
 	cardToPlay = (*playerHand)[playInd];
 
+	//cout << (isPlayable(cardToPlay, currPlayer)) << endl;
 	if ((isPlayable(cardToPlay, currPlayer))) //get input -- where will you play it to?
 	{
 		firstTry = true;
@@ -292,7 +293,6 @@ void playGame(playSpace* playerOne, playSpace* playerTwo, playSpace* boardState)
 
 	int currPlayer = 1;
 	while(mainDeck->size() > 0)
-	//while(currPlayer > 0)
 	{
 		if (currPlayer > 0)
 			takeTurn(playerOne, boardState, playerTwo);
