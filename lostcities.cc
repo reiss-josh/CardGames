@@ -18,6 +18,8 @@ typedef std::vector<cardObj*> deckObj;
 typedef std::vector<deckObj*> playSpace;
 
 
+
+//converts color of card to index in color array
 int colorToIndex(cardObj* colorCard)
 {
 	const char* suitList[] = {SUITLIST};
@@ -28,41 +30,23 @@ int colorToIndex(cardObj* colorCard)
 	}
 }
 
+//returns whether or not B is higher value than A
 bool Compare_By_Value(cardObj* cardA, cardObj* cardB)
-{
-	return cardA->cardValue < cardB->cardValue;
-}
+	{return cardA->cardValue < cardB->cardValue;}
 
+//returns whether or not B is higher color than A
 bool Compare_By_Color(cardObj* cardA, cardObj* cardB)
-{
-	return colorToIndex(cardA) < colorToIndex(cardB);
-}
+	{return colorToIndex(cardA) < colorToIndex(cardB);}
 
+//returns whether a card in a playspace is playable
 bool isPlayable(cardObj* playCard, playSpace* playAttempt)
 {
 	int ind = colorToIndex(playCard);
 	deckObj* obsDeck = (*playAttempt)[ind];
-	if((obsDeck->size() == 0) || (obsDeck->back()->cardValue < playCard->cardValue))
+	if((obsDeck->size() == 0) || (obsDeck->back()->cardValue <= playCard->cardValue))
 		return true;
 	else
 		return false;
-}
-
-void printDeck(deckObj* printyDeck, playSpace* deckOrigin)
-{
-	cout << " YOUR HAND:\t|  INDEX:  |  PLAYABLE?:" << endl;
-	for(int i = 0; i < printyDeck->size(); i++)
-	{
-		cout << " " << (*printyDeck)[i]->cardColor << "\t ";
-		cout << (*printyDeck)[i]->cardValue << "\t|  ";
-		cout << i+1 <<"\t   |  ";
-		if((deckOrigin != NULL) && (isPlayable((*printyDeck)[i], deckOrigin)))
-			cout << "Y";
-		else
-			cout << "N";
-		cout << endl;
-	}
-	cout << endl;
 }
 
 //sorts a deck by color and value
@@ -71,6 +55,13 @@ deckObj* Sort_Deck(deckObj* sortyDeck)
 	std::sort(sortyDeck->begin(), sortyDeck->end(), Compare_By_Value);
 	std::sort(sortyDeck->begin(), sortyDeck->end(), Compare_By_Color);
 	return sortyDeck;
+}
+
+//shuffles a deck object
+void shuffleDeck(deckObj* shufflyDeck)
+{
+	for(int i = 0; i < NUMSHUFFLES; i++)
+		random_shuffle(shufflyDeck->begin(), shufflyDeck->end());
 }
 
 //scores a given pile
@@ -118,6 +109,7 @@ void setupHands(deckObj* playerOneHand, deckObj* playerTwoHand, deckObj* drawPil
 	}
 }
 
+//builds and returns the main deck object
 deckObj* buildDeck()
 {
 	const char* suitList[] = {SUITLIST};
@@ -143,6 +135,7 @@ deckObj* buildDeck()
 	return mainDeck;
 }
 
+//print the top of each card in the three playspaces
 void printPlaySpaceTops(playSpace* playerSpace, playSpace* boardSpace, playSpace* otherPlayerSpace)
 {
 	const char* suitList[] = {SUITLIST};
@@ -175,12 +168,25 @@ void printPlaySpaceTops(playSpace* playerSpace, playSpace* boardSpace, playSpace
 	cout << endl;
 }
 
-void shuffleDeck(deckObj* shufflyDeck)
+//print a deck and whether or not its cards are playable
+void printDeck(deckObj* printyDeck, playSpace* deckOrigin)
 {
-	for(int i = 0; i < NUMSHUFFLES; i++)
-		random_shuffle(shufflyDeck->begin(), shufflyDeck->end());
+	cout << " YOUR HAND:\t|  INDEX:  |  PLAYABLE?:" << endl;
+	for(int i = 0; i < printyDeck->size(); i++)
+	{
+		cout << " " << (*printyDeck)[i]->cardColor << "\t ";
+		cout << (*printyDeck)[i]->cardValue << "\t|  ";
+		cout << i+1 <<"\t   |  ";
+		if((deckOrigin != NULL) && (isPlayable((*printyDeck)[i], deckOrigin)))
+			cout << "Y";
+		else
+			cout << "N";
+		cout << endl;
+	}
+	cout << endl;
 }
 
+//prints the suits and their indices
 void printSuits()
 {
 	const char* suitList[] = {SUITLIST};
@@ -190,6 +196,7 @@ void printSuits()
 		{cout << suitList[i] << "\t|\t" << i+1 << endl;}
 }
 
+//take the player's turn
 void takeTurn(playSpace* currPlayer, playSpace* boardState, playSpace* otherPlayer)
 {
 	int playInd = -1;
@@ -277,6 +284,7 @@ void takeTurn(playSpace* currPlayer, playSpace* boardState, playSpace* otherPlay
 	cout << endl << endl << endl << endl << endl << endl << endl;
 }
 
+//play the game
 void playGame(playSpace* playerOne, playSpace* playerTwo, playSpace* boardState)
 {
 	const char* suitList[] = {SUITLIST};
@@ -294,12 +302,11 @@ void playGame(playSpace* playerOne, playSpace* playerTwo, playSpace* boardState)
 	}
 }
 
+//free up some memory
 void deletePlayspaceObjects(playSpace* delSpace)
 {
 	for (int i = 0; i < delSpace->size(); i++)
-	{
-		delete ((*delSpace)[i]);
-	}
+		{delete ((*delSpace)[i]);}
 }
 
 int main()
@@ -333,6 +340,10 @@ int main()
 
 	cout << score_all_piles(playerOne) << endl;
 	cout << score_all_piles(playerTwo) << endl;
+
+	deletePlayspaceObjects(playerOne);
+	deletePlayspaceObjects(playerTwo);
+	deletePlayspaceObjects(boardState);
 
 	return 0;
 }
