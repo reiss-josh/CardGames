@@ -1,0 +1,46 @@
+note - king has 13 health
+		queen has 12
+		jack has 11
+
+SETUP:
+	start game with 3 by 3
+	any royals get placed adjacent to most-similar card
+	option to return one existing card in 3x3 to bottom of deck
+
+TURN:
+	Draw card.
+		May choose to play an ace or joker.
+	If ace or joker, add to supply.
+	Else,
+		May be placed anywhere in 3x3 where card beneath is <= in value.
+	if no placement is valid -
+		May choose to play an ace or joker.
+		Else,
+			Add card as armor to an existing royal.
+			If this armor makes that royal's health > 20,
+				Game end.
+	if is royal:
+		place adjacent to most-similar available card.
+		if this card is on a corner, choose where to place next to corner.
+
+On placement:
+	If on a corner, for both row and column:
+		Traverse row/column, adding value of cards.
+		If at end of column, a royal exists, determine if value > royal's health + armor.
+		If value >, kill royal, if:
+			payload value is made of anything, and joker
+			payload value is made of same color, queen
+			payload value is made of same suit, king
+
+On joker:
+	Move the top card of a pile to another pile.
+	Discard joker.
+
+On ace:
+	Flip and return a pile to bottom of draw pile.
+
+On all royals dead:
+	Win. Score = remaining jokers+aces
+
+On deck empty and no aces:
+	Game end.
